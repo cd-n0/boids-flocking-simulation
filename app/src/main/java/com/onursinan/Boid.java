@@ -3,6 +3,7 @@ package com.onursinan;
 import java.awt.*;
 // QS: https://youtu.be/zCiMlbu1-aQ
 import java.awt.geom.*;
+import java.lang.Math;
 
 // TODO: Comment
 // TODO: Implement Seperation, alignment and cohesion
@@ -14,8 +15,8 @@ public class Boid{
     private Vector velocity;
     
     Boid(){
-        this.position = new Vector(WIDTH / 2 , HEIGHT / 2);
-        this.velocity = new Vector(0, 0);
+        this.position = new Vector(WIDTH/2 , HEIGHT/2);// Vector(WIDTH * Math.random() , HEIGHT * Math.random());
+        this.velocity = new Vector(2 * (Math.random() - 0.5), 2 * (Math.random() - 0.5));
     }
 
     Boid(int x, int y){
@@ -29,6 +30,14 @@ public class Boid{
     }
 
     public void updateBoid(Graphics2D g){
+        // Calculate the magnitude of the vector
+        double magnitude = Math.sqrt(Math.pow(this.velocity.x, 2) + Math.pow(this.velocity.y, 2));
+
+        // Normalize the velocities
+        if (magnitude > 0){
+        this.velocity.x /= magnitude;
+        this.velocity.y /= magnitude;
+        }
         this.position.add(this.velocity);
         this.drawBoid(g);
         this.wrapAround(WIDTH, HEIGHT);
