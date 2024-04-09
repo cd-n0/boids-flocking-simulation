@@ -64,8 +64,8 @@ public class Boid {
         this.drawBoid(g);
         this.wrapAround(WIDTH, HEIGHT);
         this.velocity.add(align(boids));
-        this.velocity.limit(1);
-        this.velocity.normalize();
+        this.velocity.multiply(1.05);
+        this.velocity.limit(1.5);
     }
 
     /**
@@ -80,7 +80,8 @@ public class Boid {
         g.translate(this.position.x, this.position.y);
         g.rotate(velocity.angle());
         // Set color based on rotation
-        g.setColor(Color.getHSBColor(velocity.normalizedAngle() * 10, 1, 1));
+        g.setColor(Color.getHSBColor(Math.abs(velocity.normalizedAngle()) * 20, 1, 1));
+        System.out.println(velocity.normalizedAngle());
         g.fill(boidShape());
         g.setTransform(transformation);
     }
@@ -127,7 +128,7 @@ public class Boid {
         for (int i = 0; i < boids.size(); i++) {
             boid = boids.get(i);
             double distance = Vector.distance(position, boid.position);
-            if (distance < 100) {
+            if (distance < 50) {
                 vec.add(boid.velocity);
                 boid_count++;
             }
