@@ -15,7 +15,7 @@ public class Boid{
     private Vector velocity;
     
     Boid(){
-        this.position = new Vector(WIDTH/2 , HEIGHT/2);// Vector(WIDTH * Math.random() , HEIGHT * Math.random());
+        this.position = new Vector(WIDTH * Math.random() , HEIGHT * Math.random());
         this.velocity = new Vector(2 * (Math.random() - 0.5), 2 * (Math.random() - 0.5));
     }
 
@@ -24,7 +24,7 @@ public class Boid{
         this.velocity = new Vector(-1, 0);
     }
 
-    Boid(int x, int y, int i, int j){
+    Boid(int x, int y, double i, double j){
         this.position = new Vector(x , y);
         this.velocity = new Vector(i, j);
     }
@@ -34,9 +34,9 @@ public class Boid{
         double magnitude = Math.sqrt(Math.pow(this.velocity.x, 2) + Math.pow(this.velocity.y, 2));
 
         // Normalize the velocities
-        if (magnitude > 0){
-        this.velocity.x /= magnitude;
-        this.velocity.y /= magnitude;
+        if (magnitude > 1){
+            this.velocity.x /= magnitude;
+            this.velocity.y /= magnitude;
         }
         this.position.add(this.velocity);
         this.drawBoid(g);
