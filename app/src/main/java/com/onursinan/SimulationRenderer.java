@@ -15,8 +15,10 @@ public class SimulationRenderer extends JPanel{
 
     SimulationRenderer(){
         // TODO: Initialize boids or generate in some way, and delete the test boids
-        for (int i = 0; i < 1000; i++){
-            boids.add(new Boid());
+        for (int i = 0; i < 100; i++){
+            Boid boid = new Boid();
+            boid.setBoids(boids);
+            boids.add(boid);
         }
         this.setPreferredSize(new Dimension(WIDTH, HEIGHT));
     }
