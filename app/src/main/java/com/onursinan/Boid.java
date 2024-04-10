@@ -20,7 +20,7 @@ public class Boid {
     private final double maximumForce = 0.5;
     private final double alignmentDistance = 40;
     private final double cohesionDistance = 40;
-    private final double seperationDistance = 20;
+    private final double seperationDistance = 35;
 
     // Position and velocity vectors of the boid
     private Vector position = null;
@@ -203,7 +203,7 @@ public class Boid {
                 diff = Vector.subtract(this.position, boid.position);
                 // The closer it is the faster
                 diff.normalize();
-                diff.divide(distance * 100);
+                diff.divide(distance);
                 steeringVector.add(diff);
                 localFlockmateCount++;
             }
