@@ -9,7 +9,7 @@ public class Vector {
 
     /** The x component of the vector. */
     public double x;
-    
+
     /** The y component of the vector. */
     public double y;
 
@@ -75,6 +75,19 @@ public class Vector {
     }
 
     /**
+     * Adds the components of a vector from another vector.
+     *
+     * @param vector1 The vector to add to.
+     * @param vector2 The vector to add.
+     */
+    public static Vector add(Vector vector1, Vector vector2){
+        Vector vector = new Vector();
+        vector.x = vector1.x + vector2.x;
+        vector.y = vector1.y + vector2.y;
+        return vector;
+    }
+
+    /**
      * Subtracts the components of another vector from this vector.
      *
      * @param vector The vector to subtract.
@@ -82,6 +95,19 @@ public class Vector {
     public void subtract(Vector vector){
         this.x -= vector.x;
         this.y -= vector.y;
+    }
+
+    /**
+     * Subtracts the components of a vector from another vector.
+     *
+     * @param vector1 The vector to subtract from.
+     * @param vector2 The vector to subtract.
+     */
+    public static Vector subtract(Vector vector1, Vector vector2){
+        Vector vector = new Vector();
+        vector.x = vector1.x - vector2.x;
+        vector.y = vector1.y - vector2.y;
+        return vector;
     }
 
     /**
@@ -95,11 +121,28 @@ public class Vector {
     }
 
     /**
+     * Divides the components of a vector from another vector.
+     *
+     * @param vector1 The vector to divide.
+     * @param vector2 The vector to divide with.
+     */
+    public static Vector divide(Vector vector1, Vector vector2){
+        Vector vector = new Vector();
+        if (vector2.x == 0 && vector2.y == 0)
+            return new Vector();
+        vector.x = vector1.x / vector2.x;
+        vector.y = vector1.y / vector2.y;
+        return vector;
+    }
+
+    /**
      * Divides the components of this vector by a scalar value.
      *
      * @param value The value to divide by.
      */
     public void divide(double value){
+        if (value == 0)
+            return;
         this.x /= value;
         this.y /= value;
     }
@@ -112,6 +155,19 @@ public class Vector {
     public void multiply(Vector vector){
         this.x *= vector.x;
         this.y *= vector.y;
+    }
+
+    /**
+     * Divides the components of a vector from another vector.
+     *
+     * @param vector1 The vector to multiply.
+     * @param vector2 The vector to multiply with.
+     */
+    public static Vector multiply(Vector vector1, Vector vector2){
+        Vector vector = new Vector();
+        vector.x = vector1.x * vector2.x;
+        vector.y = vector1.y * vector2.y;
+        return vector;
     }
 
     /**
