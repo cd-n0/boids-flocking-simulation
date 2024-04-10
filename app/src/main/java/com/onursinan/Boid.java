@@ -16,21 +16,26 @@ public class Boid {
     // Width and height of the simulation area
     private final int WIDTH = 1000;
     private final int HEIGHT = 1000;
+    private final double maximumSpeed = 2.5;
+    private final double maximumForce = 0.5;
+    private final double alignmentDistance = 40;
+    private final double cohesionDistance = 40;
+    private final double seperationDistance = 20;
 
     // Position and velocity vectors of the boid
     private Vector position = null;
     private Vector velocity = null;
 
     // List of all boids in the simulation
-    private LinkedList<Boid> boids = null;
+    private LinkedList<Boid> flock = null;
 
     /**
-     * Sets the list of boids in the simulation.
+     * Sets the list of flock in the simulation.
      *
-     * @param boids The list of boids.
+     * @param flock The list of flock.
      */
-    public void setBoids(LinkedList<Boid> boids) {
-        this.boids = boids;
+    public void setBoids(LinkedList<Boid> flock) {
+        this.flock = flock;
     }
 
     /**
@@ -63,9 +68,11 @@ public class Boid {
         this.position.add(this.velocity);
         this.drawBoid(g);
         this.wrapAround(WIDTH, HEIGHT);
-        this.velocity.add(align(boids));
-        this.velocity.multiply(1.05);
-        this.velocity.limit(1.5);
+        this.velocity.multiply(1.1);
+        this.velocity.limit(maximumSpeed);
+        this.velocity.add(alignment(flock));
+        this.velocity.add(cohesion(flock));
+        this.velocity.add(seperation(flock));
     }
 
     /**
@@ -74,14 +81,13 @@ public class Boid {
      * @param g The graphics context for drawing.
      */
     private void drawBoid(Graphics2D g) {
-        System.out.print("Drawing ");
-        System.out.println(this);
+//        System.out.print("Drawing ");
+//        System.out.println(this);
         AffineTransform transformation = g.getTransform();
         g.translate(this.position.x, this.position.y);
         g.rotate(velocity.angle());
         // Set color based on rotation
         g.setColor(Color.getHSBColor(Math.abs(velocity.normalizedAngle()) * 20, 1, 1));
-        System.out.println(velocity.normalizedAngle());
         g.fill(boidShape());
         g.setTransform(transformation);
     }
@@ -116,28 +122,100 @@ public class Boid {
     }
 
     /**
-     * Calculates the alignment vector for the boid based on neighboring boids.
+     * Calculates the alignment vector for the boid based on neighboring flock.
      *
-     * @param boids The list of all boids.
+     * @param flock The list of all boids.
      * @return The alignment vector.
      */
-    private Vector align(LinkedList<Boid> boids) {
+    private Vector alignment(LinkedList<Boid> flock) {
         Boid boid = null;
-        int boid_count = 0;
-        Vector vec = new Vector();
-        for (int i = 0; i < boids.size(); i++) {
-            boid = boids.get(i);
+        int localFlockmateCount = 0;
+        Vector steeringVector = new Vector();
+        for (int i = 0; i < flock.size(); i++) {
+            boid = flock.get(i);
             double distance = Vector.distance(position, boid.position);
-            if (distance < 50) {
-                vec.add(boid.velocity);
-                boid_count++;
+            if (distance < alignmentDistance) {
+                steeringVector.add(boid.velocity);
+                localFlockmateCount++;
             }
         }
-        vec.divide(boid_count);
-        vec.subtract(this.velocity);
-        vec.multiply(0.1);
+        if (localFlockmateCount > 0) {
+            // Average
+            steeringVector.divide(localFlockmateCount);
+            // Direction
+            steeringVector.normalize();
+            steeringVector.multiply(maximumSpeed);
+            steeringVector.subtract(this.velocity);
+            steeringVector.limit(maximumForce);
+        }
 
-        return vec;
+        return steeringVector;
+    }
+
+
+    /**
+     * Calculates the cohesion vector for the boid based on neighboring flock.
+     *
+     * @param flock The list of all boids.
+     * @return The alignment vector.
+     */
+    private Vector cohesion(LinkedList<Boid> flock) {
+        Boid boid = null;
+        int localFlockmateCount = 0;
+        Vector steeringVector = new Vector();
+        for (int i = 0; i < flock.size(); i++) {
+            boid = flock.get(i);
+            double distance = Vector.distance(position, boid.position);
+            if (distance > 0 && distance < cohesionDistance) {
+                steeringVector.add(boid.position);
+                localFlockmateCount++;
+            }
+        }
+        if (localFlockmateCount > 0) {
+            // Center of neighboring flock
+            steeringVector.divide(localFlockmateCount);
+            // Get the direction
+            steeringVector.subtract(this.position);
+            steeringVector.normalize();
+            steeringVector.multiply(maximumSpeed);
+            steeringVector.subtract(this.velocity);
+            steeringVector.limit(maximumForce);
+        }
+
+        return steeringVector;
+    }
+
+    /**
+     * Calculates the seperation vector for the boid based on neighboring flock.
+     *
+     * @param flock The list of all boids.
+     * @return The alignment vector.
+     */
+    private Vector seperation(LinkedList<Boid> flock) {
+        Boid boid = null;
+        int localFlockmateCount = 0;
+        Vector steeringVector = new Vector();
+        Vector diff = new Vector();
+        for (int i = 0; i < flock.size(); i++) {
+            boid = flock.get(i);
+            double distance = Vector.distance(position, boid.position);
+            if (distance < seperationDistance) {
+                diff = Vector.subtract(this.position, boid.position);
+                // The closer it is the faster
+                diff.normalize();
+                diff.divide(distance * 100);
+                steeringVector.add(diff);
+                localFlockmateCount++;
+            }
+        }
+        if (localFlockmateCount > 0) {
+            steeringVector.normalize();
+            steeringVector.multiply(maximumSpeed);
+            steeringVector.subtract(this.velocity);
+            steeringVector.limit(maximumForce);
+        }
+
+        return steeringVector;
     }
 
     /**
