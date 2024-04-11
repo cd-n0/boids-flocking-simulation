@@ -14,8 +14,6 @@ import java.lang.Math;
  */
 public class Boid {
     // Width and height of the simulation area
-    private final int WIDTH = 1000;
-    private final int HEIGHT = 1000;
     private final double maximumSpeed = 2.5;
     private final double maximumForce = 0.5;
     private final double alignmentDistance = 40;
@@ -42,7 +40,7 @@ public class Boid {
      * Constructs a boid with a random position and velocity within the simulation area.
      */
     Boid() {
-        this.position = new Vector(WIDTH * Math.random(), HEIGHT * Math.random());
+        this.position = new Vector(SimulationRenderer.dimension.width * Math.random(), SimulationRenderer.dimension.height * Math.random());
         this.velocity = new Vector(2 * (Math.random() - 0.5), 2 * (Math.random() - 0.5));
     }
 
@@ -67,8 +65,8 @@ public class Boid {
     public void updateBoid(Graphics2D g) {
         this.position.add(this.velocity);
         this.drawBoid(g);
-        this.wrapAround(WIDTH, HEIGHT);
-        this.velocity.multiply(1.1);
+        this.wrapAround(SimulationRenderer.dimension.width, SimulationRenderer.dimension.height);
+        this.velocity.multiply(1.01);
         this.velocity.limit(maximumSpeed);
         this.velocity.add(alignment(flock));
         this.velocity.add(cohesion(flock));

@@ -16,6 +16,8 @@ public class SimulationFrame extends JFrame{
         this.setTitle("Boids Flocking Simulation");
         this.setLocation(0, 0);
         this.setVisible(true);
-        panel.run();
+        Rectangle display = this.getBounds();
+        System.out.println(display.x + " " + display.y);
+        panel.run(this);
     }
 }

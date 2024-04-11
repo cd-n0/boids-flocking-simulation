@@ -7,9 +7,9 @@ import java.util.*;
 
 // TODO: Comment
 public class SimulationRenderer extends JPanel{
+    private JFrame frame = null;
     private LinkedList<Boid> boids = new LinkedList<Boid>();
-    private final int WIDTH = 1000;
-    private final int HEIGHT = 1000;
+    protected static Dimension dimension = new Dimension(1000, 1000);
     // Game Tick
     private final Timer timer = new Timer(10, listener->repaint());
 
@@ -20,19 +20,20 @@ public class SimulationRenderer extends JPanel{
             boid.setBoids(boids);
             boids.add(boid);
         }
-        this.setPreferredSize(new Dimension(WIDTH, HEIGHT));
+        this.setPreferredSize(new Dimension(dimension.width, dimension.height));
     }
     public void renderLoop(Graphics graphics){
         Graphics2D g = (Graphics2D) graphics;
         // Enable AA
-        // g.setRenderingHint(RenderingHints.KEY_ANTIALIASING, RenderingHints.VALUE_ANTIALIAS_ON);
+        g.setRenderingHint(RenderingHints.KEY_ANTIALIASING, RenderingHints.VALUE_ANTIALIAS_ON);
         paintBoids(g);
     }
     private void paintBoids(Graphics2D g){
         boids.forEach(boid -> boid.updateBoid(g));
     }
 
-    public void run(){
+    public void run(JFrame frame){
+        this.frame = frame;
         timer.start();
     }
 
@@ -50,6 +51,10 @@ public class SimulationRenderer extends JPanel{
         Graphics2D g = (Graphics2D)graphics;
         g.setRenderingHint(RenderingHints.KEY_ANTIALIASING, RenderingHints.VALUE_ANTIALIAS_ON);
 
+        SimulationRenderer.dimension = frame.getSize();
+        
+        frame.setSize(SimulationRenderer.dimension);
+        
         renderLoop(graphics);
     }
 
