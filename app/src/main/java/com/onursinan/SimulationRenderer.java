@@ -9,17 +9,15 @@ import java.util.*;
 public class SimulationRenderer extends JPanel{
     private JFrame frame = null;
     private LinkedList<Boid> boids = new LinkedList<Boid>();
-    protected static Dimension dimension = new Dimension(1000, 1000);
+    protected static Dimension dimension = null;
     // Game Tick
     private final Timer timer = new Timer(10, listener->repaint());
 
-    SimulationRenderer(){
-        // TODO: Initialize boids or generate in some way, and delete the test boids
-        for (int i = 0; i < 250; i++){
-            Boid boid = new Boid();
-            boid.setBoids(boids);
-            boids.add(boid);
-        }
+    SimulationRenderer(JFrame frame){
+        this.frame = frame;
+        SimulationRenderer.dimension = frame.getSize();
+        initBoids(250);
+        this.run();
         this.setPreferredSize(new Dimension(dimension.width, dimension.height));
     }
     public void renderLoop(Graphics graphics){
@@ -28,12 +26,25 @@ public class SimulationRenderer extends JPanel{
         g.setRenderingHint(RenderingHints.KEY_ANTIALIASING, RenderingHints.VALUE_ANTIALIAS_ON);
         paintBoids(g);
     }
+
+    /**
+     * Initialize n boids
+     *
+     * @param n number of boids
+     */
+    private void initBoids(int n){
+        for (int i = 0; i < n; i++){
+            Boid boid = new Boid();
+            boid.setBoids(boids);
+            boids.add(boid);
+        }
+    }
+
     private void paintBoids(Graphics2D g){
         boids.forEach(boid -> boid.updateBoid(g));
     }
 
-    public void run(JFrame frame){
-        this.frame = frame;
+    public void run(){
         timer.start();
     }
 
